@@ -1,0 +1,22 @@
+---
+kind: pipeline
+type: docker
+name:
+steps:
+  - name: tagging
+    image: alpine
+    commands:
+      - echo -n "${DRONE_COMMIT_REF},latest" | awk -F "-v" '{print $NF}' > .tags
+  - name: Build electron-packager
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: dh_login
+      password:
+        from_secret: dh_pass
+      repo: mlunax/drone-electron-packager
+      dockerfile: electron-packager/Dockerfile
+
+trigger:
+  ref:
+    - refs/tags/electron-packager*
