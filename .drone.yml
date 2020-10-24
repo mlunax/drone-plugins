@@ -10,12 +10,27 @@ steps:
   - name: Build electron-packager
     image: plugins/docker
     settings:
+      dry_run: true
       username:
         from_secret: dh_login
       password:
         from_secret: dh_pass
       repo: mlunax/drone-electron-packager
       dockerfile: electron-packager/Dockerfile
+  - name: Push electron-packager
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: dh_login
+      password:
+        from_secret: dh_pass
+      repo: mlunax/drone-electron-packager
+      dockerfile: electron-packager/Dockerfile
+    when:
+      event:
+        - promote
+      target:
+        - production
 
 trigger:
   ref:
